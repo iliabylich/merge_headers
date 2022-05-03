@@ -16,8 +16,7 @@ Usage:
 ./merge_headers --cc <CC> --headers "foo.h;bar.h" --include-guard-prefix="<PREFIX>" --write-to <OUTFILE>
 "#;
     fn print_usage_and_exit() -> ! {
-        eprintln!("{}", Self::USAGE.trim());
-        std::process::exit(1);
+        panic!("{}", Self::USAGE.trim());
     }
 
     pub(crate) fn parse() -> Self {

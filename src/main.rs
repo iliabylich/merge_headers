@@ -4,13 +4,22 @@ use args::Args;
 mod dependency_graph;
 use dependency_graph::DependencyGraph;
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let args = Args::parse();
-    println!("Running with args = {:#?}", args);
+#[macro_export]
+macro_rules! println_if_debug {
+    ($debug:expr, $fmt_string:expr, $( $arg:expr ),*) => {
+        if $debug {
+            eprintln!($fmt_string, $( $arg ),*);
+        }
+    };
+}
 
-    let graph = DependencyGraph::new(&args.cc, &args.headers);
+fn main() {
+    let args = Args::parse();
+    eprintln!("Running with args = {:#?}", args);
+
+    let graph = DependencyGraph::new(args.debug, &args.cc, &args.headers);
     let sorted = graph.sorted();
-    eprintln!("Sorted list:\n{:#?}", sorted);
+    println_if_debug!(args.debug, "Sorted list:\n{:#?}", sorted);
 
     // Merging
     let mut output = vec![];
@@ -33,11 +42,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
             if line.starts_with("#include <") {
                 // global include
-                // let include = line
-                //     .strip_prefix("#include <")
-                //     .unwrap()
-                //     .strip_suffix(">")
-                //     .unwrap();
                 includes.push(line.to_string());
                 continue;
             }
@@ -53,7 +57,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     includes.sort_unstable();
     includes.dedup();
-    eprintln!("includes = {:#?}", includes);
+    println_if_debug!(args.debug, "includes = {:#?}", includes);
 
     let output = format!(
         "#ifndef {guard}
@@ -71,5 +75,5 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     );
 
     std::fs::write(&args.write_to, output).unwrap();
-    Ok(())
+    eprintln!("Writing to {}", args.write_to);
 }
