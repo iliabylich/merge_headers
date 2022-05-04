@@ -6,7 +6,6 @@ pub(crate) struct Args {
     pub(crate) include_guard_prefix: String,
     pub(crate) write_to: String,
     pub(crate) output_guard: String,
-    pub(crate) debug: bool,
 }
 
 impl Args {
@@ -48,7 +47,6 @@ Usage:
         let include_guard_prefix = get_arg("--include-guard-prefix");
         let write_to = get_arg("--write-to");
         let output_guard = get_arg("--output-guard");
-        let debug = std::env::var("MERGE_HEADERS_DEBUG").is_ok();
 
         Self {
             cc,
@@ -56,12 +54,10 @@ Usage:
             include_guard_prefix,
             write_to,
             output_guard,
-            debug,
         }
     }
 }
 
-#[cfg(debug_assertions)]
 #[allow(dead_code)]
 pub(crate) fn dummy() -> Args {
     Args::parse([
@@ -91,7 +87,6 @@ fn test_args() {
             include_guard_prefix: String::from("FIXTURE_"),
             write_to: String::from("output.h"),
             output_guard: String::from("GUARD_H"),
-            debug: false
         }
     )
 }

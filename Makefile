@@ -5,8 +5,7 @@ test: merged.h
 	cat merged.h
 
 merged.h: $(INPUT1) $(INPUT2)
-	DEBUG=1 \
-		cargo run -- \
+	cargo run -- \
 		--cc clang \
 		--headers "$(INPUT1);$(INPUT2)" \
 		--write-to merged.h \

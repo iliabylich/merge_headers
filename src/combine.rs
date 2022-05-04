@@ -35,7 +35,7 @@ pub(crate) fn combine(args: &Args, files: &[String]) -> String {
 
     includes.sort_unstable();
     includes.dedup();
-    println_if_debug!(args.debug, "includes = {:#?}", includes);
+    println_if_debug!("includes = {:#?}", includes);
 
     let output = format!(
         "#ifndef {guard}
