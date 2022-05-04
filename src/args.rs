@@ -20,13 +20,7 @@ Usage:
     }
 
     pub(crate) fn parse<T: Into<String>, S: IntoIterator<Item = T>>(args: S) -> Self {
-        let mut args = args
-            .into_iter()
-            .map(|e| {
-                let s: String = e.into();
-                s
-            })
-            .collect::<Vec<_>>();
+        let mut args = args.into_iter().map(|e| e.into()).collect::<Vec<String>>();
         let mut get_arg = |key: &str| {
             let key_idx = args
                 .iter()
@@ -70,7 +64,7 @@ Usage:
 #[cfg(debug_assertions)]
 #[allow(dead_code)]
 pub(crate) fn dummy() -> Args {
-    Args::parse(vec![
+    Args::parse([
         "--cc",
         "clang",
         "--headers",
