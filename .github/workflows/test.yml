@@ -14,7 +14,7 @@ defaults:
     shell: bash
 
 jobs:
-  test-rust-parser:
+  test:
     name: target = ${{ matrix.build.target }}
     runs-on: ${{ matrix.build.os }}
     strategy:
