@@ -17,7 +17,8 @@ macro_rules! println_if_debug {
 }
 
 fn main() {
-    let args = Args::parse();
+    let args = std::env::args().collect::<Vec<_>>();
+    let args = Args::parse(args);
     eprintln!("Running with args = {:#?}", args);
 
     let graph = DependencyGraph::new(args.debug, &args.cc, &args.headers);

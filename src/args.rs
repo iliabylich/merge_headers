@@ -1,4 +1,4 @@
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 
 pub(crate) struct Args {
     pub(crate) cc: String,
@@ -19,8 +19,14 @@ Usage:
         panic!("{}", Self::USAGE.trim());
     }
 
-    pub(crate) fn parse() -> Self {
-        let mut args = std::env::args().into_iter().collect::<Vec<_>>();
+    pub(crate) fn parse<T: Into<String>, S: IntoIterator<Item = T>>(args: S) -> Self {
+        let mut args = args
+            .into_iter()
+            .map(|e| {
+                let s: String = e.into();
+                s
+            })
+            .collect::<Vec<_>>();
         let mut get_arg = |key: &str| {
             let key_idx = args
                 .iter()
@@ -59,4 +65,39 @@ Usage:
             debug,
         }
     }
+}
+
+#[cfg(debug_assertions)]
+#[allow(dead_code)]
+pub(crate) fn dummy() -> Args {
+    Args::parse(vec![
+        "--cc",
+        "clang",
+        "--headers",
+        "fixtures/input1.h;fixtures/input2.h",
+        "--include-guard-prefix",
+        "GUARD_",
+        "--write-to",
+        "output.h",
+        "--output-guard",
+        "GUARD_H",
+    ])
+}
+
+#[test]
+fn test_args() {
+    assert_eq!(
+        dummy(),
+        Args {
+            cc: String::from("clang"),
+            headers: vec![
+                String::from("fixtures/input1.h"),
+                String::from("fixtures/input2.h"),
+            ],
+            include_guard_prefix: String::from("GUARD_"),
+            write_to: String::from("output.h"),
+            output_guard: String::from("GUARD_H"),
+            debug: false
+        }
+    )
 }
