@@ -41,11 +41,10 @@ fn get_deps(cc: &str, filepath: &str) -> HashSet<String> {
 }
 
 impl DependencyGraph {
-    pub(crate) fn new<T: Into<String>, S: IntoIterator<Item = T>>(cc: &str, headers: S) -> Self {
+    pub(crate) fn new(cc: &str, headers: &[String]) -> Self {
         let mut deps_map = HashMap::new();
         for header in headers {
-            let header: String = header.into();
-            let deps = get_deps(cc, &header);
+            let deps = get_deps(cc, header);
             deps_map.insert(header.clone(), deps);
         }
         Self { deps: deps_map }
@@ -93,7 +92,14 @@ fn test_get_deps() {
 #[test]
 fn test_dependency_graph() {
     assert_eq!(
-        DependencyGraph::new("clang", ["fixtures/input1.h", "fixtures/input2.h"]).sorted(),
+        DependencyGraph::new(
+            "clang",
+            &[
+                String::from("fixtures/input1.h"),
+                String::from("fixtures/input2.h")
+            ]
+        )
+        .sorted(),
         // input2.h depends on input1.h
         ["fixtures/input1.h", "fixtures/input2.h"]
     )

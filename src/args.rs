@@ -18,8 +18,7 @@ Usage:
         panic!("{}", Self::USAGE.trim());
     }
 
-    pub(crate) fn parse<T: Into<String>, S: IntoIterator<Item = T>>(args: S) -> Self {
-        let mut args = args.into_iter().map(|e| e.into()).collect::<Vec<String>>();
+    pub(crate) fn parse(mut args: Vec<String>) -> Self {
         let mut get_arg = |key: &str| {
             let key_idx = args
                 .iter()
@@ -60,17 +59,17 @@ Usage:
 
 #[allow(dead_code)]
 pub(crate) fn dummy() -> Args {
-    Args::parse([
-        "--cc",
-        "clang",
-        "--headers",
-        "fixtures/input1.h;fixtures/input2.h",
-        "--include-guard-prefix",
-        "FIXTURE_",
-        "--write-to",
-        "output.h",
-        "--output-guard",
-        "GUARD_H",
+    Args::parse(vec![
+        String::from("--cc"),
+        String::from("clang"),
+        String::from("--headers"),
+        String::from("fixtures/input1.h;fixtures/input2.h"),
+        String::from("--include-guard-prefix"),
+        String::from("FIXTURE_"),
+        String::from("--write-to"),
+        String::from("output.h"),
+        String::from("--output-guard"),
+        String::from("GUARD_H"),
     ])
 }
 
