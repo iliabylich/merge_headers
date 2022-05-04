@@ -53,3 +53,33 @@ pub(crate) fn combine(args: &Args, files: &[String]) -> String {
         contents = output.join("\n")
     )
 }
+
+#[test]
+fn test_combine() {
+    assert_eq!(
+        combine(
+            &crate::args::dummy(),
+            &[
+                String::from("fixtures/input1.h"),
+                String::from("fixtures/input2.h")
+            ]
+        ),
+        "#ifndef GUARD_H
+#define GUARD_H
+
+#include <stdbool.h>
+#include <stdio.h>
+
+
+
+void input1(void);
+
+
+
+void input2(void);
+
+
+#endif // GUARD_H
+"
+    )
+}

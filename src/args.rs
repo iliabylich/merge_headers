@@ -70,7 +70,7 @@ pub(crate) fn dummy() -> Args {
         "--headers",
         "fixtures/input1.h;fixtures/input2.h",
         "--include-guard-prefix",
-        "GUARD_",
+        "FIXTURE_",
         "--write-to",
         "output.h",
         "--output-guard",
@@ -88,7 +88,7 @@ fn test_args() {
                 String::from("fixtures/input1.h"),
                 String::from("fixtures/input2.h"),
             ],
-            include_guard_prefix: String::from("GUARD_"),
+            include_guard_prefix: String::from("FIXTURE_"),
             write_to: String::from("output.h"),
             output_guard: String::from("GUARD_H"),
             debug: false
