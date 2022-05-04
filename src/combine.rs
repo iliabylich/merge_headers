@@ -28,17 +28,16 @@ pub(crate) fn combine(args: &Args, files: &[String]) -> String {
                 // local include, ignore
                 continue;
             }
-            out.push(line);
+            out.push(line.to_string());
         }
-        let out = out.join("\n");
-        output.push(out);
+        output.append(&mut out);
     }
 
     includes.sort_unstable();
     includes.dedup();
     println_if_debug!(args.debug, "includes = {:#?}", includes);
 
-    format!(
+    let output = format!(
         "#ifndef {guard}
 #define {guard}
 
@@ -51,7 +50,29 @@ pub(crate) fn combine(args: &Args, files: &[String]) -> String {
         guard = args.output_guard,
         includes = includes.join("\n"),
         contents = output.join("\n")
-    )
+    );
+    remove_2_cons_empty_lines(output)
+}
+
+fn remove_2_cons_empty_lines(input: String) -> String {
+    let mut output = input.lines().collect::<Vec<_>>();
+
+    let mut empty_lines_to_trim = vec![];
+    for (idx, line1) in output.iter().enumerate() {
+        if line1.is_empty() {
+            if let Some(line2) = output.get(idx + 1) {
+                if line2.is_empty() {
+                    empty_lines_to_trim.push(idx);
+                }
+            }
+        }
+    }
+    for idx in empty_lines_to_trim.iter().rev() {
+        output.remove(*idx);
+    }
+    let mut output = output.join("\n");
+    output.push_str("\n");
+    output
 }
 
 #[test]
@@ -70,14 +91,9 @@ fn test_combine() {
 #include <stdbool.h>
 #include <stdio.h>
 
-
-
 void input1(void);
 
-
-
 void input2(void);
-
 
 #endif // GUARD_H
 "
