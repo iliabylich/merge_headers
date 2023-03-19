@@ -19,13 +19,20 @@ fn get_deps(cc: &str, filepath: &str) -> HashSet<String> {
     if !output.stderr.is_empty() {
         println_if_debug!("Stderr:\n{}", String::from_utf8_lossy(&output.stderr));
     }
-    let output = String::from_utf8(output.stdout).unwrap_or_else(|_err| {
-        panic!("{} {:?} returned utf-8-incompatible", cc, args,);
+    let stdout = String::from_utf8(output.stdout).unwrap_or_else(|_err| {
+        panic!("{} {:?} returned utf-8-incompatible stdout", cc, args,);
     });
 
-    let deps = output.split(':').collect::<Vec<_>>();
+    let stderr = String::from_utf8(output.stderr).unwrap_or_else(|_err| {
+        panic!("{} {:?} returned utf-8-incompatible stderr", cc, args,);
+    });
+
+    let deps = stdout.split(':').collect::<Vec<_>>();
     if deps.len() != 2 {
-        panic!("{} {:?} returns incompatible output:\n{}", cc, args, output);
+        panic!(
+            "{} {:?} returns incompatible output:\nstdout:\n{}stderr:\n{}",
+            cc, args, stdout, stderr
+        );
     }
     let deps = deps[1]
         .split_whitespace()
