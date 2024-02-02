@@ -5,7 +5,7 @@ pub(crate) fn combine(args: &Args, files: &[String]) -> String {
     let mut includes = vec![];
 
     for filepath in files {
-        let contents = std::fs::read_to_string(&filepath).unwrap();
+        let contents = std::fs::read_to_string(filepath).unwrap();
         let mut out = vec![];
         let mut lines = contents.lines();
         while let Some(line) = lines.next() {
@@ -71,7 +71,7 @@ fn remove_2_cons_empty_lines(input: String) -> String {
         output.remove(*idx);
     }
     let mut output = output.join("\n");
-    output.push_str("\n");
+    output.push('\n');
     output
 }
 

@@ -34,13 +34,13 @@ Usage:
                 eprintln!("No {} CLI option given", key);
                 Args::print_usage_and_exit();
             }
-            let value = args.remove(key_idx);
-            value
+            // next element is the value
+            args.remove(key_idx)
         };
 
         let cc = get_arg("--cc");
         let headers = get_arg("--headers")
-            .split(";")
+            .split(';')
             .map(|e| e.to_string())
             .collect::<Vec<_>>();
         let include_guard_prefix = get_arg("--include-guard-prefix");
