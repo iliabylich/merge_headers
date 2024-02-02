@@ -19,49 +19,23 @@ jobs:
         build:
           - { os: ubuntu-latest, target: x86_64-unknown-linux-gnu }
           - { os: macos-latest, target: x86_64-apple-darwin }
+          - { os: macos-latest, target: aarch64-apple-darwin }
     steps:
-      - name: checkout
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: install rust
-        uses: actions-rs/toolchain@v1
+      - uses: dtolnay/rust-toolchain@stable
         with:
-          profile: minimal
-          toolchain: stable
-          target: ${{ matrix.build.target }}
-          override: true
+          targets: ${{ matrix.build.target }}
 
-      - name: build merge-headers executable
-        run: cargo build --release
+      - run: cargo build --release --target ${{ matrix.build.target }}
 
-      - name: give executable representable name
-        run: cp target/release/merge-headers ./merge-headers-${{ matrix.build.target }}
-
-      - name: upload executable
-        uses: actions/upload-artifact@v2
-        with:
-          name: merge-headers-${{ matrix.build.target }}
-          path: merge-headers-${{ matrix.build.target }}
-
-  make-release:
-    name: release
-    needs: ['build']
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout
-        uses: actions/checkout@v3
-
-      - uses: actions/download-artifact@v2
-        with: { name: merge-headers-x86_64-unknown-linux-gnu }
-
-      - uses: actions/download-artifact@v2
-        with: { name: merge-headers-x86_64-apple-darwin }
+      - run: cp target/${{ matrix.build.target }}/release/merge-headers merge-headers-${{ matrix.build.target }}
 
       - name: release
         uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
           artifactErrorsFailBuild: true
-          artifacts: "merge-headers-*"
+          artifacts: merge-headers-${{ matrix.build.target }}
           token: ${{ secrets.GITHUB_TOKEN }}
 

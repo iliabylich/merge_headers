@@ -99,6 +99,7 @@ Currently the following triplets are supported:
 
 1. `x86_64-apple-darwin` (i.e. Apple Intel)
 2. `x86_64-unknown-linux-gnu` (i.e. Linux with shared libc)
+2. `aarch64-apple-darwin` (i.e. Apple on M1)
 
 If you want to build it manually:
 
